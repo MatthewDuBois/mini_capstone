@@ -3,26 +3,25 @@ class Api::ProductsController < ApplicationController
     @products = Product.all
 
     search_terms = params[:search]
-    price_sort = params[:sort_order]
-    price_search = params[:sort]
-    discount_search = params[:discount]
+    sort_order = params[:sort_order]
+    sort_attribute = params[:sort]
+    discount = params[:discount]
 
-    if discount_search
-      @products = @products.where("price < 75", true )
+    if discount
+      @products = @products.where("price < ?", 75)
     end  
 
     if search_terms
       @products = @products.where("name iLIKE ?", "%#{search_terms}%")
     end 
-    
-    if price_search == "price"
-      @products = @products.order(:price => :ASC)
-    elsif price_sort == "desc" && price_search == "price"
-      @products = @products.order(:price => :DESC)
+
+    if sort_attribute && sort_order
+      @products = @products.order(sort_attribute => sort_order)
+    elsif sort_attribute 
+      @products = @products.order(sort_attribute)
     else
-      @products = @products.order(:id => :asc)
+      @products = @products.order(:id)
     end
-    
 
     render 'index.json.jbuilder'
   end 
@@ -32,8 +31,8 @@ class Api::ProductsController < ApplicationController
     @product = Product.new(
                           name: params[:name],
                           price: params[:price],
-                          description: params[:description],
-                          image_url: params[:image_url],
+                          description: params[:description],                     
+                          supplier_id: params[:supplier_id]
                         )
     if @product.save
       render 'show.json.jbuilder'
@@ -54,8 +53,8 @@ class Api::ProductsController < ApplicationController
     @product.name = params[:name] || @product.name
     @product.price = params[:price] || @product.price
     @product.description = params[:description] || @product.description
-    @product.image_url = params[:image_url] || @product.image_url
     @product.in_stock = params[:in_stock] || @product.in_stock
+    @product.supplier_id = params[:supplier_id] || @product.supplier_id
 
     if @product.save
       render 'show.json.jbuilder'

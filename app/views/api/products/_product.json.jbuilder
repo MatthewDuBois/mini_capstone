@@ -7,9 +7,17 @@ json.total product.total
 
 
 json.description product.description
-json.image_url product.image_url
 json.is_discounted product.is_discounted?
 json.in_stock product.in_stock?
+json.supplier_id product.supplier_id
+
+json.supplier do 
+  json.partial! product.supplier, partial: 'api/suppliers/supplier', as: :supplier 
+end  
+
+json.images do
+  json.array! product.images, partial: 'api/images/image', as: :image
+end  
 
 
 json.formatted do
