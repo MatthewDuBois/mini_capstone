@@ -1,20 +1,27 @@
 class Api::ProductsController < ApplicationController
+  before_action :authenticate_admin, except: [:index, :show]
+
   def index
     @products = Product.all
 
-    search_terms = params[:search]
-    sort_order = params[:sort_order]
-    sort_attribute = params[:sort]
+    category_name = params[:category]
+    if category_name
+      category = Category.find_by(name: category_name)
+      @products = category.products 
+    end
+    
     discount = params[:discount]
-
     if discount
       @products = @products.where("price < ?", 75)
     end  
 
+    search_terms = params[:search]
     if search_terms
       @products = @products.where("name iLIKE ?", "%#{search_terms}%")
     end 
 
+    sort_order = params[:sort_order]
+    sort_attribute = params[:sort]
     if sort_attribute && sort_order
       @products = @products.order(sort_attribute => sort_order)
     elsif sort_attribute 
