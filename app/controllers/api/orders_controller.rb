@@ -35,9 +35,9 @@ class Api::OrdersController < ApplicationController
     render 'show.json.jbuilder'
   end  
 
-  def index
-    @orders = Order.all
-    render 'index.json.jbuilder'
-  end  
+  # def index
+  #   @orders = Order.all
+  #   render 'index.json.jbuilder'
+  # end  
 end
 
